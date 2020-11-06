@@ -1,0 +1,235 @@
+Grammar
+
+    0 $accept: command $end
+
+    1 command: %empty
+    2        | command exp EOL
+    3        | command error EOL
+
+    4 exp: exp opsuma term
+    5    | term
+
+    6 opsuma: '+'
+    7       | '-'
+
+    8 term: term opmult factor
+    9     | factor
+
+   10 opmult: '*'
+
+   11 factor: NUMBER
+   12       | '(' exp ')'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 12
+')' (41) 12
+'*' (42) 10
+'+' (43) 6
+'-' (45) 7
+error (256) 3
+NUMBER (258) 11
+EOL (259) 2 3
+
+
+Nonterminals, with rules where they appear
+
+$accept (10)
+    on left: 0
+command (11)
+    on left: 1 2 3, on right: 0 2 3
+exp (12)
+    on left: 4 5, on right: 2 4 12
+opsuma (13)
+    on left: 6 7, on right: 4
+term (14)
+    on left: 8 9, on right: 4 5 8
+opmult (15)
+    on left: 10, on right: 8
+factor (16)
+    on left: 11 12, on right: 8 9
+
+
+State 0
+
+    0 $accept: . command $end
+
+    $default  reduce using rule 1 (command)
+
+    command  go to state 1
+
+
+State 1
+
+    0 $accept: command . $end
+    2 command: command . exp EOL
+    3        | command . error EOL
+
+    $end    shift, and go to state 2
+    error   shift, and go to state 3
+    NUMBER  shift, and go to state 4
+    '('     shift, and go to state 5
+
+    exp     go to state 6
+    term    go to state 7
+    factor  go to state 8
+
+
+State 2
+
+    0 $accept: command $end .
+
+    $default  accept
+
+
+State 3
+
+    3 command: command error . EOL
+
+    EOL  shift, and go to state 9
+
+
+State 4
+
+   11 factor: NUMBER .
+
+    $default  reduce using rule 11 (factor)
+
+
+State 5
+
+   12 factor: '(' . exp ')'
+
+    NUMBER  shift, and go to state 4
+    '('     shift, and go to state 5
+
+    exp     go to state 10
+    term    go to state 7
+    factor  go to state 8
+
+
+State 6
+
+    2 command: command exp . EOL
+    4 exp: exp . opsuma term
+
+    EOL  shift, and go to state 11
+    '+'  shift, and go to state 12
+    '-'  shift, and go to state 13
+
+    opsuma  go to state 14
+
+
+State 7
+
+    5 exp: term .
+    8 term: term . opmult factor
+
+    '*'  shift, and go to state 15
+
+    $default  reduce using rule 5 (exp)
+
+    opmult  go to state 16
+
+
+State 8
+
+    9 term: factor .
+
+    $default  reduce using rule 9 (term)
+
+
+State 9
+
+    3 command: command error EOL .
+
+    $default  reduce using rule 3 (command)
+
+
+State 10
+
+    4 exp: exp . opsuma term
+   12 factor: '(' exp . ')'
+
+    '+'  shift, and go to state 12
+    '-'  shift, and go to state 13
+    ')'  shift, and go to state 17
+
+    opsuma  go to state 14
+
+
+State 11
+
+    2 command: command exp EOL .
+
+    $default  reduce using rule 2 (command)
+
+
+State 12
+
+    6 opsuma: '+' .
+
+    $default  reduce using rule 6 (opsuma)
+
+
+State 13
+
+    7 opsuma: '-' .
+
+    $default  reduce using rule 7 (opsuma)
+
+
+State 14
+
+    4 exp: exp opsuma . term
+
+    NUMBER  shift, and go to state 4
+    '('     shift, and go to state 5
+
+    term    go to state 18
+    factor  go to state 8
+
+
+State 15
+
+   10 opmult: '*' .
+
+    $default  reduce using rule 10 (opmult)
+
+
+State 16
+
+    8 term: term opmult . factor
+
+    NUMBER  shift, and go to state 4
+    '('     shift, and go to state 5
+
+    factor  go to state 19
+
+
+State 17
+
+   12 factor: '(' exp ')' .
+
+    $default  reduce using rule 12 (factor)
+
+
+State 18
+
+    4 exp: exp opsuma term .
+    8 term: term . opmult factor
+
+    '*'  shift, and go to state 15
+
+    $default  reduce using rule 4 (exp)
+
+    opmult  go to state 16
+
+
+State 19
+
+    8 term: term opmult factor .
+
+    $default  reduce using rule 8 (term)

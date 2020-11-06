@@ -1,0 +1,207 @@
+Grammar
+
+    0 $accept: command $end
+
+    1 command: exp
+
+    2 exp: exp opsuma term
+    3    | term
+
+    4 opsuma: '+'
+    5       | '-'
+
+    6 term: term opmult factor
+    7     | factor
+
+    8 opmult: '*'
+
+    9 factor: NUMBER
+   10       | '(' exp ')'
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 10
+')' (41) 10
+'*' (42) 8
+'+' (43) 4
+'-' (45) 5
+error (256)
+NUMBER (258) 9
+
+
+Nonterminals, with rules where they appear
+
+$accept (9)
+    on left: 0
+command (10)
+    on left: 1, on right: 0
+exp (11)
+    on left: 2 3, on right: 1 2 10
+opsuma (12)
+    on left: 4 5, on right: 2
+term (13)
+    on left: 6 7, on right: 2 3 6
+opmult (14)
+    on left: 8, on right: 6
+factor (15)
+    on left: 9 10, on right: 6 7
+
+
+State 0
+
+    0 $accept: . command $end
+
+    NUMBER  shift, and go to state 1
+    '('     shift, and go to state 2
+
+    command  go to state 3
+    exp      go to state 4
+    term     go to state 5
+    factor   go to state 6
+
+
+State 1
+
+    9 factor: NUMBER .
+
+    $default  reduce using rule 9 (factor)
+
+
+State 2
+
+   10 factor: '(' . exp ')'
+
+    NUMBER  shift, and go to state 1
+    '('     shift, and go to state 2
+
+    exp     go to state 7
+    term    go to state 5
+    factor  go to state 6
+
+
+State 3
+
+    0 $accept: command . $end
+
+    $end  shift, and go to state 8
+
+
+State 4
+
+    1 command: exp .
+    2 exp: exp . opsuma term
+
+    '+'  shift, and go to state 9
+    '-'  shift, and go to state 10
+
+    $default  reduce using rule 1 (command)
+
+    opsuma  go to state 11
+
+
+State 5
+
+    3 exp: term .
+    6 term: term . opmult factor
+
+    '*'  shift, and go to state 12
+
+    $default  reduce using rule 3 (exp)
+
+    opmult  go to state 13
+
+
+State 6
+
+    7 term: factor .
+
+    $default  reduce using rule 7 (term)
+
+
+State 7
+
+    2 exp: exp . opsuma term
+   10 factor: '(' exp . ')'
+
+    '+'  shift, and go to state 9
+    '-'  shift, and go to state 10
+    ')'  shift, and go to state 14
+
+    opsuma  go to state 11
+
+
+State 8
+
+    0 $accept: command $end .
+
+    $default  accept
+
+
+State 9
+
+    4 opsuma: '+' .
+
+    $default  reduce using rule 4 (opsuma)
+
+
+State 10
+
+    5 opsuma: '-' .
+
+    $default  reduce using rule 5 (opsuma)
+
+
+State 11
+
+    2 exp: exp opsuma . term
+
+    NUMBER  shift, and go to state 1
+    '('     shift, and go to state 2
+
+    term    go to state 15
+    factor  go to state 6
+
+
+State 12
+
+    8 opmult: '*' .
+
+    $default  reduce using rule 8 (opmult)
+
+
+State 13
+
+    6 term: term opmult . factor
+
+    NUMBER  shift, and go to state 1
+    '('     shift, and go to state 2
+
+    factor  go to state 16
+
+
+State 14
+
+   10 factor: '(' exp ')' .
+
+    $default  reduce using rule 10 (factor)
+
+
+State 15
+
+    2 exp: exp opsuma term .
+    6 term: term . opmult factor
+
+    '*'  shift, and go to state 12
+
+    $default  reduce using rule 2 (exp)
+
+    opmult  go to state 13
+
+
+State 16
+
+    6 term: term opmult factor .
+
+    $default  reduce using rule 6 (term)
